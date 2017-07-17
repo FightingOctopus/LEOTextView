@@ -43,6 +43,11 @@ extension LEOTextView: UITextViewDelegate {
     }
 
     public func textViewDidChange(_ textView: UITextView) {
+        defer {
+            if nck_delegate != nil && nck_delegate!.responds(to: #selector(self.textViewDidChange(_:))) {
+                nck_delegate!.textViewDidChange!(textView)
+            }
+        }
         let paragraphType = currentParagraphType()
 
         let objectIndex = LEOTextUtil.objectLineAndIndexWithString(text, location: selectedRange.location).1
@@ -118,10 +123,6 @@ extension LEOTextView: UITextViewDelegate {
         }
 
         nck_textStorage.returnKeyDeleteEffectRanges.removeAll()
-
-        if nck_delegate != nil && nck_delegate!.responds(to: #selector(self.textViewDidChange(_:))) {
-            nck_delegate!.textViewDidChange!(textView)
-        }
     }
 
     public func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
